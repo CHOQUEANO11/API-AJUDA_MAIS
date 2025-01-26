@@ -1,0 +1,7 @@
+# O QUE NÃO SOBE
+
+/node_modules
+
+.env
+
+package-lock.json
