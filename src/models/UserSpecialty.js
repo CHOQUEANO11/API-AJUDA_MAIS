@@ -7,7 +7,7 @@ const UserSpecialtySchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   phone: { type: String, required: true },
-  orgao_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Org', required: true },
+  orgao_id: { type: mongoose.Schema.Types.ObjectId, ref: "Org" },  // user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   specialty_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Specialty', required: true },
   photo: { type: String },
 });

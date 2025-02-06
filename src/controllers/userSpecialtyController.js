@@ -7,6 +7,7 @@ import nodemailer from 'nodemailer';
 import path from "path";
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import mongoose from 'mongoose'
 
 
 export const createSpecialtyUser = async (req, res) => {
@@ -32,7 +33,7 @@ export const createSpecialtyUser = async (req, res) => {
       phone,
       orgao_id,
       specialty_id,
-      photo
+      photo: `http://localhost:3001/${photo}`
     });
 
     // Salvando o usuário no banco
@@ -118,6 +119,28 @@ export const getSpecialtyUser = async (req, res) => {
   }
 };
 
+export const getSpecialtyUsersByOrgao = async (req, res) => {
+  try {
+    const { orgao_id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(orgao_id)) {
+      return res.status(400).json({ message: "ID do órgão inválido" });
+    }
+
+    const users = await SpecialtyUser.find({ orgao_id: new mongoose.Types.ObjectId(orgao_id) }).populate("specialty_id", "name").populate("orgao_id", "name");
+
+    if (!users.length) {
+      return res.status(404).json({ message: "Nenhum usuário encontrado para este órgão!" });
+    }
+
+    res.status(200).json({ users });
+  } catch (error) {
+    console.error("Erro ao buscar usuários:", error);
+    res.status(500).json({ message: "Erro ao buscar usuários", error });
+  }
+};
+
+
 // Método para buscar todos os usuários
 export const getSpecialtyUsers = async (req, res) => {
   try {
@@ -139,7 +162,7 @@ export const updateSpecialtyUser = async (req, res) => {
       return res.status(400).json({ message: 'E-mail já está em uso!' });
     }
 
-    const user = await User.findById(id);
+    const user = await SpecialtyUser.findById(id);
     if (!user) {
       return res.status(404).json({ message: 'Usuário não encontrado!' });
     }
