@@ -1,7 +1,7 @@
 // src/routes/orgRoutes.js
 
 import express from 'express';
-import { createPerfil, getAllPerfil, updatePerfil,deletePerfil } from '../controllers/PerfilController.js';
+import { createPerfil, getAllPerfil, updatePerfil,deletePerfil } from '../controllers/perfilController.js';
 import { authenticateToken } from '../middlewares/authMiddleware.js';
 
 
