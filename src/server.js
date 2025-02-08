@@ -54,4 +54,8 @@ app.use('/schedule', scheduleRoutes)
 // app.listen(PORT, () => {
 //   console.log(`Server running on http://localhost:${PORT}`);
 // });
-app.listen(process.env.PORT || 3333); 
+const port = process.env.PORT || 3333;  // Se não encontrar a variável, usa a porta 10000
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
