@@ -151,6 +151,20 @@ export const getSpecialtyUsers = async (req, res) => {
   }
 };
 
+export const getUser = async (req, res) => {
+  const id = req.user.id;
+
+  // Exemplo: Buscar o usuário no banco de dados usando o ID
+  SpecialtyUser.findById(id)
+    .then(user => {
+      if (!user) return res.status(404).json({ error: 'User not found' });
+      res.json(user); // Retorna os dados do usuário
+    })
+    .catch(err => {
+      res.status(500).json({ error: 'Server error' });
+    });
+}
+
 export const updateSpecialtyUser = async (req, res) => {
   try {
     const { id } = req.params;
