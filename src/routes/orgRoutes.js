@@ -8,7 +8,7 @@ import { authenticateToken } from '../middlewares/authMiddleware.js';
 const router = express.Router();
 
 // Rota para criar órgão
-router.post('/org', authenticateToken, createOrg);
+router.post('/org', createOrg);
 router.get('/orgs', authenticateToken, getAllOrgs);
 router.put('/org/:id', authenticateToken, updateOrg);
 router.delete('/org/:id', authenticateToken, deleteOrg);

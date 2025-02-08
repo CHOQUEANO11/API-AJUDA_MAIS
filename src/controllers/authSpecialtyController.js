@@ -6,8 +6,8 @@ const loginSpecialty = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await SpecialtyUser.findOne({ email })
-    .populate('orgao_id', 'name') // Popula o nome do órgão
-    .populate('specialty_id', 'name');; // Popula o nome da especialidade
+    .populate('orgao_id', 'name') 
+    .populate('specialty_id', 'name');; 
 
     if (!user) return res.status(404).json({ message: 'Usuário não encontrado!' });
 
