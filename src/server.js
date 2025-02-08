@@ -50,7 +50,8 @@ app.use('/schedule', scheduleRoutes)
 
 
 // const PORT = process.env.PORT || 3001;
-const PORT = 3001
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// const PORT = 3001
+// app.listen(PORT, () => {
+//   console.log(`Server running on http://localhost:${PORT}`);
+// });
+app.listen(process.env.PORT || 3333); 
