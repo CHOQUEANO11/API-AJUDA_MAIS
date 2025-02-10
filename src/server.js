@@ -19,6 +19,8 @@ import authSpecialty from './routes/userSpecialtyRoutes.js'
 import userSpecialty from './routes/userSpecialtyRoutes.js'
 import perfilRoutes from './routes/perfilRoutes.js'
 import scheduleRoutes from './routes/scheduleRoutes.js'
+import emotionRoutes from './routes/emotionRoutes.js'
+import emotionUserRoutes from './routes/emotionUserRoutes.js'
 
 const app = express();
 
@@ -46,6 +48,8 @@ app.use('/login', authSpecialty)
 app.use('/specialtyUser', userSpecialty)
 app.use('/perfil', perfilRoutes);
 app.use('/schedule', scheduleRoutes)
+app.use('/emotion', emotionRoutes);
+app.use('/emotionUser', emotionUserRoutes)
 
 
 
