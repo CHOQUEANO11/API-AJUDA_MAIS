@@ -10,7 +10,7 @@ import { ptBR } from 'date-fns/locale';
 
 export const createUser = async (req, res) => {
   try {
-    const { name, email, password, phone, orgao_id } = req.body;
+    const { name, email, password, phone, age, orgao_id } = req.body;
 
     //HASH SENHA
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -23,6 +23,7 @@ export const createUser = async (req, res) => {
       email,
       password: hashedPassword,
       phone,
+      age,
       orgao_id,
       photo
     });

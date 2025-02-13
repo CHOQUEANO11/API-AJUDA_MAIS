@@ -5,6 +5,7 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   phone: { type: String, required: true },
+  age: { type: String, required: true },
   orgao_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Org', required: true },
   photo: { type: String },
 });
