@@ -12,7 +12,7 @@ router.post('/schedule', authenticateToken, createSchedule);
 router.get('/schedule', authenticateToken, getSchedules);
 router.get('/schedule/:specialty_id', authenticateToken, getSchedulesBySpecialty);
 router.get('/schedu/:user_id', authenticateToken, getSchedulesByUser);
-// router.get('/schedule/:specialty_id', authenticateToken, getUserSchedules);
+router.get('/schedules/:orgao_id', getUserSchedules);
 router.put('/schedule/:id', authenticateToken, updateSchedule);
 router.delete('/schedule/:id', authenticateToken, deleteSchedule);
 

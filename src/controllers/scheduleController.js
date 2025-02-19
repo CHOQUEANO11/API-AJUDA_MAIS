@@ -1,14 +1,15 @@
 import Schedule from "../models/Schedule.js";
 import UserSpecialty from "../models/UserSpecialty.js";
+import mongoose from "mongoose";
 
 /**
  * Cria um novo agendamento
  */
 export const createSchedule = async (req, res) => {
   try {
-    const { org_id, user_id, specialty_id, date, hours } = req.body;
+    const { orgao_id, user_id, specialty_id, date, hours } = req.body;
 
-    if (!org_id || !user_id || !specialty_id || !date || !hours.length) {
+    if (!orgao_id || !user_id || !specialty_id || !date || !hours.length) {
       return res.status(400).json({ message: "Todos os campos são obrigatórios." });
     }
 
@@ -24,7 +25,7 @@ export const createSchedule = async (req, res) => {
     // const user_id = userSpecialty?.specialty_id?._id;
 
     // Criar um novo agendamento
-    const newSchedule = new Schedule({ org_id, specialty_id, user_id, date, hours });
+    const newSchedule = new Schedule({ orgao_id, specialty_id, user_id, date, hours });
     await newSchedule.save();
 
     res.status(201).json({ message: "Agendamento criado com sucesso!", data: newSchedule });
@@ -35,17 +36,21 @@ export const createSchedule = async (req, res) => {
 
 export const getUserSchedules = async (req, res) => {
   try {
-    const { specialty_id } = req.params; // Pega o ID do usuário da URL
+    const { orgao_id } = req.params; // Pega o ID da organização da URL
 
-    if (!specialty_id) {
-      return res.status(400).json({ message: "O ID do usuário é obrigatório." });
+    if (!orgao_id || !mongoose.Types.ObjectId.isValid(orgao_id)) {
+      return res.status(400).json({ message: "O ID da organização é inválido ou não fornecido." });
     }
 
-    // Busca os agendamentos do usuário e popula o nome do especialista
-    const schedules = await Schedule.find({ specialty_id }).populate("specialty_id", "name");
+    // Busca os agendamentos pelo orgao_id
+    const schedules = await Schedule.find({ orgao_id })
+      .populate("user_id", "name email")
+      .populate("specialty_id", "name")
+      .populate("orgao_id", "name")
+      .sort({ date: 1, hours: 1 });
 
     if (!schedules.length) {
-      return res.status(404).json({ message: "Nenhum agendamento encontrado." });
+      return res.status(404).json({ message: "Nenhum agendamento encontrado para esta organização." });
     }
 
     res.status(200).json({ message: "Agendamentos encontrados!", data: schedules });
@@ -53,6 +58,7 @@ export const getUserSchedules = async (req, res) => {
     res.status(500).json({ message: "Erro ao buscar agendamentos.", error: error.message });
   }
 };
+
 
 
 export const getSchedulesBySpecialty = async (req, res) => {
@@ -82,25 +88,24 @@ export const getSchedulesBySpecialty = async (req, res) => {
 
 export const getSchedulesByUser = async (req, res) => {
   try {
-    const { user_id } = req.params;  // Usando user_id recebido da URL
-    // const {specialty_id} = req.body
+    const { user_id } = req.params;
 
-    if (!user_id) {
-      return res.status(400).json({ error: "O ID do usuário é obrigatório." });
+    // Verifica se user_id é válido
+    if (!user_id || !mongoose.Types.ObjectId.isValid(user_id)) {
+      return res.status(400).json({ error: "ID do usuário inválido." });
     }
 
-    // Busca os agendamentos do usuário e popula o nome do especialista
-    const schedules = await Schedule.find({ user_id })
-      .populate("specialty_id", "name") // Trazendo apenas o nome do especialista
-      .sort({ date: 1, hours: 1 });  // Ordenando pela data e hora
+    const schedules = await Schedule.find({ user_id: user_id }).populate("user_id", "name") 
+      .populate("specialty_id", "name")
+      .sort({ date: 1, hours: 1 });
 
     if (!schedules.length) {
-      return res.status(404).json({ message: "Nenhum agendamento encontrado para este usuário." });
+      return res.status(404).json({ message: "Nenhum agendamento encontrado." });
     }
 
-    res.status(200).json(schedules);  // Retorna os agendamentos encontrados
+    res.status(200).json(schedules);
   } catch (error) {
-    console.error("Erro ao buscar os agendamentos:", error);
+    console.error("Erro ao buscar agendamentos:", error);
     res.status(500).json({ error: "Erro interno do servidor." });
   }
 };
