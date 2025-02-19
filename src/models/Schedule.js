@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 const ScheduleSchema = new mongoose.Schema({
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "UserSpecialty",
+    ref: "User",
     required: true,
   },
-  org_id: {
+  orgao_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Organization",
+    ref: "Org",
     required: true,
   },
   specialty_id: {
