@@ -7,6 +7,7 @@ const appointmentSchema = new mongoose.Schema({
   orgao_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Org', required: true },
   date: { type: String, required: true },
   hour: { type: String, required: true },
+  status: { type: String, enum: ["aberta", "realizada", "cancelada"], default: "aberta" },
   createdAt: { type: Date, default: Date.now },
 });
 
