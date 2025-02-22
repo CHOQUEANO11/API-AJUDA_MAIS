@@ -50,7 +50,7 @@ export const getUserSchedules = async (req, res) => {
       .sort({ date: 1, hours: 1 });
 
     if (!schedules.length) {
-      return res.status(404).json({ message: "Nenhum agendamento encontrado para esta organização." });
+      return res.status(404).json({ message: "Nenhuma agenda encontrada para esta organização." });
     }
 
     res.status(200).json({ message: "Agendamentos encontrados!", data: schedules });
