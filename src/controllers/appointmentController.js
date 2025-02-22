@@ -1,6 +1,6 @@
 import Appointment from '../models/Appointment.js';
 import Schedule from '../models/Schedule.js';
-import { io } from '../server.js';
+// import { io } from '../server.js';
 
 export const createAppointment = async (req, res) => {
   try {
@@ -24,7 +24,7 @@ export const createAppointment = async (req, res) => {
     schedule.hours = schedule.hours.filter(h => h !== hour);
     await schedule.save();
 
-    io.emit('appointmentUpdated', { message: 'Novo agendamento criado' });
+    // io.emit('appointmentUpdated', { message: 'Novo agendamento criado' });
 
     res.status(201).json({ message: 'Consulta marcada com sucesso!', appointment });
   } catch (error) {
