@@ -1,13 +1,14 @@
 import Appointment from '../models/Appointment.js';
 import Schedule from '../models/Schedule.js';
+import { io } from '../server.js';
 
 export const createAppointment = async (req, res) => {
   try {
-    const { user_id, specialty_id, specialist_id, date, hour, orgao_id } = req.body;
+    const { user_id, specialty_id, specialist_id, date, hour, orgao_id, status } = req.body;
     console.log(user_id, specialty_id,specialist_id, date, hour, orgao_id)
 
     // Verifica se o horário está disponível
-    const schedule = await Schedule.findOne({ orgao_id, specialty_id, user_id: specialist_id, date });
+    const schedule = await Schedule.findOne({ orgao_id, specialty_id, user_id: specialist_id, date, status });
     if (schedule) {
       console.log('Horários salvos:', schedule.hours);
     }
@@ -16,12 +17,14 @@ export const createAppointment = async (req, res) => {
     }
 
     // Cria a consulta
-    const appointment = new Appointment({ user_id, specialty_id, specialist_id, date, hour, orgao_id });
+    const appointment = new Appointment({ user_id, specialty_id, specialist_id, date, hour, orgao_id, status });
     await appointment.save();
 
     // Remove o horário agendado da agenda
     schedule.hours = schedule.hours.filter(h => h !== hour);
     await schedule.save();
+
+    io.emit('appointmentUpdated', { message: 'Novo agendamento criado' });
 
     res.status(201).json({ message: 'Consulta marcada com sucesso!', appointment });
   } catch (error) {
@@ -47,13 +50,39 @@ export const getAppointmentsByUser = async (req, res) => {
       .populate('specialty_id', 'name')  // Popula specialty_id com o campo name
       .populate('user_id', 'name email phone')  // Popula o user_id com name e email
       .populate('specialist_id', 'name email phone')  // Popula o specialist_id com name e email
-      .populate('orgao_id');  // Popula os dados de orgao_id, se necessário
+      .populate('orgao_id')  // Popula os dados de orgao_id, se necessário
 
     res.status(200).json(appointments);
   } catch (error) {
     res.status(500).json({ message: 'Erro ao buscar consultas do usuário', error });
   }
 };
+
+export const updateAppointmentStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    console.log(status)
+    if (!["realizada", "cancelada"].includes(status)) {
+      return res.status(400).json({ message: "Status inválido!" });
+    }
+
+    const appointment = await Appointment.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Consulta não encontrada!" });
+    }
+
+    res.status(200).json({ message: "Status atualizado com sucesso!", appointment });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao atualizar status", error });
+  }
+};
+
 
 
 export const deleteAppointment = async (req, res) => {
