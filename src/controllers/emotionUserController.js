@@ -2,8 +2,8 @@ import EmotionUser from '../models/EmotionUser.js';
 
 export const createEmotionUser = async (req, res) => {
   try {
-    const { user_id, identificador, name, created_at } = req.body;
-    const emotionUser = new EmotionUser({ user_id, identificador, name, created_at });
+    const { user_id, identificador, description, name, created_at } = req.body;
+    const emotionUser = new EmotionUser({ user_id, identificador, description, name, created_at });
     await emotionUser.save();
     res.status(201).json({ message: 'Emoção do usuário criada com sucesso!', emotionUser });
   } catch (error) {

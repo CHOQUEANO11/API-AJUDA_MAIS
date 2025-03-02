@@ -11,12 +11,12 @@ import mongoose from 'mongoose';
 // Criar usuário com papéis e status
 export const createUser = async (req, res) => {
   try {
-    const { name, email, specialty_id, password, phone, age, orgao_id, role = 'user', status = 'active' } = req.body;
+    const { name, email, specialty_id, password, phone, age, orgao_id, role = 'user', status = 'active', emotion= 'invisible' } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     const photo = req.file ? req.file.path : null;
 
     const user = new User({
-      name, email, specialty_id, password: hashedPassword, phone, age, orgao_id, photo, role, status
+      name, email, specialty_id, password: hashedPassword, phone, age, orgao_id, photo, role, status, emotion
     });
     await user.save();
 
@@ -84,7 +84,7 @@ export const getUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, password, phone, orgao_id, specialty_id } = req.body;
+    const { name, email, password, phone, orgao_id, specialty_id, emotion, age } = req.body;
 
     // Verificar se o e-mail já está em uso por outro usuário
     const emailExists = await User.findOne({ email, _id: { $ne: id } });
@@ -105,6 +105,8 @@ export const updateUser = async (req, res) => {
       phone: phone ?? user.phone,
       orgao_id: orgao_id ?? user.orgao_id,
       specialty_id: specialty_id ?? user.specialty_id,
+      emotion: emotion ?? user.emotion,
+      age: age ?? user.age
     });
 
     // Atualizar a senha se fornecida
