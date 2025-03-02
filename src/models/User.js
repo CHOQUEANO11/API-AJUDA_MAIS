@@ -15,6 +15,7 @@ const UserSchema = new mongoose.Schema({
     default: 'user',
   },
   status: { type: String, enum: ['active', 'inactive', 'suspended'], default: 'active' },
+  emotion: { type: String, enum: ['visible', 'invisible'], default: 'visible' },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
