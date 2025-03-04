@@ -32,6 +32,24 @@ export const createAppointment = async (req, res) => {
   }
 };
 
+export const getAppointmentsByUserId = async (req, res) => {
+  try {
+    const { user_id } = req.params;
+    
+    // Popula specialty_id, user_id (pegando name e email), e specialist_id (pegando name e email)
+    const appointments = await Appointment.find({ user_id })
+      .populate('specialty_id', 'name')  // Popula specialty_id com o campo name
+      .populate('user_id', 'name email phone')  // Popula o user_id com name, email e telefone
+      .populate('specialist_id', 'name email phone')  // Popula o specialist_id com name, email e telefone
+      .populate('orgao_id');  // Popula os dados de orgao_id, se necessário
+
+    res.status(200).json(appointments);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao buscar consultas do usuário', error });
+  }
+};
+
+
 export const getAppointments = async (req, res) => {
   try {
     const appointments = await Appointment.find().populate('user_id specialty_id orgao_id');
