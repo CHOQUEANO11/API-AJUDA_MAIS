@@ -9,7 +9,7 @@ router.get('/appointments', authenticateToken, getAppointments);
 router.put('/appointments/:id/status', updateAppointmentStatus);
 
 router.get('/appointments/user/:user_id', authenticateToken, getAppointmentsByUserId);
-router.get('/appointments/user/:specialist_id', authenticateToken, getAppointmentsByUser);
+router.get('/appointments/specialist/:specialist_id', authenticateToken, getAppointmentsByUser);
 // router.put('/appointments/:id', authenticateToken, updateAppointment);
 router.delete('/appointments/:id', authenticateToken, deleteAppointment);
 

@@ -61,8 +61,7 @@ export const getAppointments = async (req, res) => {
 
 export const getAppointmentsByUser = async (req, res) => {
   try {
-    const { specialist_id } = req.params;
-    
+    const { specialist_id } = req.params;    
     // Popula specialty_id, user_id (pegando name e email), e specialist_id (pegando name e email)
     const appointments = await Appointment.find({ specialist_id })
       .populate('specialty_id', 'name')  // Popula specialty_id com o campo name
