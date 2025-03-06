@@ -6,6 +6,8 @@ import { json, urlencoded } from 'express';
 import connectDB from './config/db.js';
 import path from 'path';
 import cors from 'cors';
+import http from 'http';
+import { Server as socketIoServer } from 'socket.io';  // Alterado para a importação correta
 
 // Import das rotas
 import orgRoutes from './routes/orgRoutes.js';
@@ -21,6 +23,19 @@ import appointmentRoutes from './routes/appointmentRoutes.js';
 import medicalRecordRoutes from './routes/medicalRecordRoutes.js';
 
 const app = express();
+
+// Criando o servidor HTTP para usar com o Socket.IO
+const server = http.createServer(app);
+const io = new socketIoServer(server, {
+  cors: {
+    origin: "*", // Permite todas as origens, mas pode restringir conforme necessário
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true
+  }
+});  // Inicializando o Socket.IO
+
+export { io };
 
 // Configurar CORS corretamente
 app.use(cors({
@@ -52,8 +67,17 @@ app.use('/emotionUser', emotionUserRoutes);
 app.use('/appointment', appointmentRoutes);
 app.use('/medicalRecord', medicalRecordRoutes);
 
+// Emitir o evento para notificar os clientes conectados sobre o novo agendamento
+io.on('connection', (socket) => {
+  console.log('Novo cliente conectado:', socket.id);
+
+  // Aqui você pode ouvir eventos específicos se precisar, por exemplo, para criar uma conexão individual.
+});
+
+// Modifique a sua função de criar agendamento para emitir o evento via Socket.IO
+
 // Iniciar servidor Express diretamente
 const port = process.env.PORT || 3333;
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`🚀 Server running on http://localhost:${port}`);
 });

@@ -1,11 +1,11 @@
 import Appointment from '../models/Appointment.js';
 import Schedule from '../models/Schedule.js';
-// import { io } from '../server.js';
+import { io } from '../server.js';
 
 export const createAppointment = async (req, res) => {
   try {
     const { user_id, specialty_id, specialist_id, date, hour, orgao_id, status } = req.body;
-    console.log(user_id, specialty_id,specialist_id, date, hour, orgao_id)
+    console.log(user_id, specialty_id, specialist_id, date, hour, orgao_id);
 
     // Verifica se o horário está disponível
     const schedule = await Schedule.findOne({ orgao_id, specialty_id, user_id: specialist_id, date, status });
@@ -24,7 +24,8 @@ export const createAppointment = async (req, res) => {
     schedule.hours = schedule.hours.filter(h => h !== hour);
     await schedule.save();
 
-    // io.emit('appointmentUpdated', { message: 'Novo agendamento criado' });
+    // Emitir o evento para notificar os clientes conectados sobre o novo agendamento
+    io.emit('appointmentUpdated', { message: 'Novo agendamento criado', appointment });
 
     res.status(201).json({ message: 'Consulta marcada com sucesso!', appointment });
   } catch (error) {
