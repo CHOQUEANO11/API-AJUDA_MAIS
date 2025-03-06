@@ -1,5 +1,6 @@
 import MedicalRecord from '../models/MedicalRecord.js';
 import Appointment from '../models/Appointment.js';
+import { io } from '../server.js';
 
 /**
  * Cria um novo prontuário vinculado a uma consulta existente.
@@ -17,6 +18,8 @@ export const createMedicalRecord = async (req, res) => {
     // Cria o prontuário
     const medicalRecord = new MedicalRecord({ user_id, specialist_id, appointment_id, date, notes });
     await medicalRecord.save();
+
+    io.emit('appointmentUpdated', { message: 'Novo Prontuário criado com sucesso!', medicalRecord });
 
     res.status(201).json({ message: 'Prontuário criado com sucesso!', medicalRecord });
   } catch (error) {
