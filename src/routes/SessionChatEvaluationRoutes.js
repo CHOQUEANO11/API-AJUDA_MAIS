@@ -8,8 +8,14 @@ import { authenticateToken } from '../middlewares/authMiddleware.js';
 const router = express.Router();
 
 
-routes.post('/createsessionchat', authenticateToken, SessionChatEvaluationController.store);
-routes.get('/getsessionchat', authenticateToken, SessionChatEvaluationController.show);
+routes.get('/getsessionchat', authenticateToken,SessionChatEvaluationController.listAll);
+routes.get('/getsessionchat/:id', authenticateToken,SessionChatEvaluationController.getOne);
+routes.post('/createsession', authenticateToken,SessionChatEvaluationController.create);
+routes.patch('/updatesession/:id', authenticateToken,SessionChatEvaluationController.update);
+routes.patch(
+  '/sessions/finalize/:id',
+  SessionChatEvaluationController.finalize
+);
 
 
 export default router;
