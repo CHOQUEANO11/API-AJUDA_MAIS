@@ -1,4 +1,4 @@
-import SessionChatEvaluation from "../models/SessionChatEvaluation.js";
+import SessionChatEvaluation from '../models/SessionChatEvaluation.js';
 
 /**
  * Lista todas as sessões de chat
