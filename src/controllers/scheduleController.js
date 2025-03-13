@@ -13,18 +13,7 @@ export const createSchedule = async (req, res) => {
       return res.status(400).json({ message: "Todos os campos são obrigatórios." });
     }
 
-    // Busca o usuário associado à especialidade
-    // const userSpecialty = await UserSpecialty.findOne({ specialty_id });
-    // console.log('USER', userSpecialty)
-
-    // if (!userSpecialty) {
-    //   return res.status(404).json({ message: "Especialista não encontrado." });
-    // }
-
-    // // Obtém o user_id do especialista
-    // const user_id = userSpecialty?.specialty_id?._id;
-
-    // Criar um novo agendamento
+    
     const newSchedule = new Schedule({ orgao_id, specialty_id, user_id, date, hours });
     await newSchedule.save();
 

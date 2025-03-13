@@ -1,121 +1,124 @@
-import SessionChat from '../models/SessionChatEvaluation.js';
+import SessionChat from "../models/SessionChatEvaluation.js";
 
-class SessionChatEvaluationController {
-  async listAll(req, res) {
-    try {
-      const sessions = await SessionChat.find().sort({
-        createdAt: -1,
-      });
-      return res.json(sessions);
-    } catch (error) {
-      return res.status(500).json({
-        error: 'Erro ao buscar sessões',
-        details: error.message,
-      });
-    }
+/**
+ * Lista todas as sessões de chat
+ */
+export const listAllSessions = async (req, res) => {
+  try {
+    const sessions = await SessionChat.find().sort({ createdAt: -1 });
+    res.status(200).json({ message: "Sessões encontradas!", data: sessions });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao buscar sessões.", error: error.message });
   }
+};
 
-  
-  // Obter uma sessão específica
-  async getOne(req, res) {
-    try {
-      const session = await SessionChat.findOne({
-        sessionId: req.params.id,
-      });
+/**
+ * Obtém uma sessão específica por ID
+ */
+export const getSessionById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const session = await SessionChat.findOne({ sessionId: id });
 
-      if (!session) {
-        return res.status(404).json({ error: 'Sessão não encontrada' });
-      }
-
-      return res.json(session);
-    } catch (error) {
-      return res.status(500).json({
-        error: 'Erro ao buscar sessão',
-        details: error.message,
-      });
+    if (!session) {
+      return res.status(404).json({ message: "Sessão não encontrada." });
     }
+
+    res.status(200).json({ message: "Sessão encontrada!", data: session });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao buscar sessão.", error: error.message });
   }
+};
 
-  // Criar nova sessão
-  async create(req, res) {
-    try {
-      const sessionData = {
-        sessionId: `chat_${Date.now()}_${Math.random()
-          .toString(36)
-          .substr(2, 9)}`,
-        ...req.body,
-      };
+/**
+ * Cria uma nova sessão de chat
+ */
+export const createSession = async (req, res) => {
+  try {
+    const sessionData = {
+      sessionId: `chat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      ...req.body,
+    };
 
-      const session = await SessionChat.create(sessionData);
-      return res.status(201).json(session);
-    } catch (error) {
-      return res.status(500).json({
-        error: 'Erro ao criar sessão',
-        details: error.message,
-      });
+    const newSession = await SessionChat.create(sessionData);
+    res.status(201).json({ message: "Sessão criada com sucesso!", data: newSession });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao criar sessão.", error: error.message });
+  }
+};
+
+/**
+ * Atualiza uma sessão de chat
+ */
+export const updateSession = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { messages } = req.body;
+
+    const updatedSession = await SessionChat.findOneAndUpdate(
+      { sessionId: id },
+      { $set: { messages } },
+      { new: true }
+    );
+
+    if (!updatedSession) {
+      return res.status(404).json({ message: "Sessão não encontrada." });
     }
+
+    res.status(200).json({ message: "Sessão atualizada com sucesso!", data: updatedSession });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao atualizar sessão.", error: error.message });
   }
+};
 
-  async update(req, res) {
-    try {
-      const session = await SessionChat.findOneAndUpdate(
-        { sessionId: req.params.id }, // Busca por sessionId
-        { $set: { messages: req.body.messages } },
-        { new: true }
-      );
+/**
+ * Finaliza uma sessão de chat
+ */
+export const finalizeSession = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const session = await SessionChat.findOne({ sessionId: id });
 
-      if (!session) {
-        return res.status(404).json({ error: 'Sessão não encontrada' });
-      }
-
-      return res.json(session);
-    } catch (error) {
-      return res.status(500).json({
-        error: 'Erro ao atualizar sessão',
-        details: error.message,
-      });
+    if (!session) {
+      return res.status(404).json({ message: "Sessão não encontrada." });
     }
-  }
 
-  async finalize(req, res) {
-    try {
-      // Buscar a sessão existente
-      const session = await SessionChat.findOne({
-        sessionId: req.params.id,
-      });
+    const lastMessage = session.messages.length > 0 ? session.messages[session.messages.length - 1].text : "";
 
-      if (!session) {
-        return res.status(404).json({ error: 'Sessão não encontrada' });
-      }
-
-      // Pegar a última mensagem
-      const lastMessage =
-        session.messages.length > 0
-          ? session.messages[session.messages.length - 1].text
-          : '';
-
-      // Atualizar o diagnóstico com o resumo
-      const updatedSession = await SessionChat.findOneAndUpdate(
-        { sessionId: req.params.id },
-        {
-          status: 'completed',
-          diagnosis: {
-            ...req.body.diagnosis,
-            summary: lastMessage,
-          },
-          endedAt: new Date(),
+    const updatedSession = await SessionChat.findOneAndUpdate(
+      { sessionId: id },
+      {
+        status: "completed",
+        diagnosis: {
+          ...req.body.diagnosis,
+          summary: lastMessage,
         },
-        { new: true }
-      );
+        endedAt: new Date(),
+      },
+      { new: true }
+    );
 
-      return res.json(updatedSession);
-    } catch (error) {
-      return res.status(500).json({
-        error: 'Erro ao finalizar sessão',
-        details: error.message,
-      });
-    }
+    res.status(200).json({ message: "Sessão finalizada com sucesso!", data: updatedSession });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao finalizar sessão.", error: error.message });
   }
-}
+};
 
-export default new SessionChatEvaluationController();
+/**
+ * Deleta uma sessão de chat
+ */
+export const deleteSession = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedSession = await SessionChat.findOneAndDelete({ sessionId: id });
+
+    if (!deletedSession) {
+      return res.status(404).json({ message: "Sessão não encontrada." });
+    }
+
+    res.status(200).json({ message: "Sessão excluída com sucesso!" });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao excluir sessão.", error: error.message });
+  }
+};

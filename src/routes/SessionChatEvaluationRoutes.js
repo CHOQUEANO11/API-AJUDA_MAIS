@@ -1,19 +1,19 @@
 // src/routes/orgRoutes.js
 
 import express from 'express';
-import SessionChatEvaluationController from '../controllers/sessionChatEvaluationController.js';
+import {listAllSessions, getSessionById, createSession, updateSession, finalizeSession, deleteSession} from '../controllers/sessionChatEvaluationController.js';
 import { authenticateToken } from '../middlewares/authMiddleware.js';
 
 
 const router = express.Router();
 
-router.get('/getsessionchat',SessionChatEvaluationController.listAll);
-router.get('/getsessionchat/:id',SessionChatEvaluationController.getOne);
-router.post('/createsession',SessionChatEvaluationController.create);
-router.patch('/updatesession/:id',SessionChatEvaluationController.update);
+router.get('/getsessionchat', listAllSessions);
+router.get('/getsessionchat/:id', getSessionById);
+router.post('/createsession', createSession);
+router.patch('/updatesession/:id', updateSession);
 router.patch(
   '/sessions/finalize/:id',
-  SessionChatEvaluationController.finalize
+  finalizeSession
 );
 
 
