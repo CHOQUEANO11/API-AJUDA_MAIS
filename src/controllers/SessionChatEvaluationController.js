@@ -1,9 +1,9 @@
-import SessionChatEvaluation from '../models/SessionChatEvaluation.js';
+import SessionChat from '../models/SessionChatEvaluation.js';
 
 class SessionChatEvaluationController {
   async listAll(req, res) {
     try {
-      const sessions = await SessionChatEvaluation.find().sort({
+      const sessions = await SessionChat.find().sort({
         createdAt: -1,
       });
       return res.json(sessions);
@@ -18,7 +18,7 @@ class SessionChatEvaluationController {
   // Obter uma sessão específica
   async getOne(req, res) {
     try {
-      const session = await SessionChatEvaluation.findOne({
+      const session = await SessionChat.findOne({
         sessionId: req.params.id,
       });
 
@@ -45,7 +45,7 @@ class SessionChatEvaluationController {
         ...req.body,
       };
 
-      const session = await SessionChatEvaluation.create(sessionData);
+      const session = await SessionChat.create(sessionData);
       return res.status(201).json(session);
     } catch (error) {
       return res.status(500).json({
@@ -57,7 +57,7 @@ class SessionChatEvaluationController {
 
   async update(req, res) {
     try {
-      const session = await SessionChatEvaluation.findOneAndUpdate(
+      const session = await SessionChat.findOneAndUpdate(
         { sessionId: req.params.id }, // Busca por sessionId
         { $set: { messages: req.body.messages } },
         { new: true }
@@ -79,7 +79,7 @@ class SessionChatEvaluationController {
   async finalize(req, res) {
     try {
       // Buscar a sessão existente
-      const session = await SessionChatEvaluation.findOne({
+      const session = await SessionChat.findOne({
         sessionId: req.params.id,
       });
 
@@ -94,7 +94,7 @@ class SessionChatEvaluationController {
           : '';
 
       // Atualizar o diagnóstico com o resumo
-      const updatedSession = await SessionChatEvaluation.findOneAndUpdate(
+      const updatedSession = await SessionChat.findOneAndUpdate(
         { sessionId: req.params.id },
         {
           status: 'completed',

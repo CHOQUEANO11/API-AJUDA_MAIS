@@ -36,7 +36,11 @@ const SessionChatEvaluationSchema = new mongoose.Schema({
   endedAt: Date,
 });
 
-export default mongoose.model(
-  'SessionChatEvaluation',
-  SessionChatEvaluationSchema
-);
+// export default mongoose.model(
+//   'SessionChatEvaluation',
+//   SessionChatEvaluationSchema
+// );
+
+const SessionChat = mongoose.models.SessionChatEvaluation || mongoose.model("SessionChatEvaluation", SessionChatEvaluationSchema);
+
+export default SessionChat;
