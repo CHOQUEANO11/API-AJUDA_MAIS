@@ -21,7 +21,8 @@ import emotionRoutes from './routes/emotionRoutes.js';
 import emotionUserRoutes from './routes/emotionUserRoutes.js';
 import appointmentRoutes from './routes/appointmentRoutes.js';
 import medicalRecordRoutes from './routes/medicalRecordRoutes.js';
-import sessionChatEvaluationRoutes from './routes/sessionChatEvaluationRoutes.js'
+import sessionChatRoutes from "./routes/sessionChatEvaluationRoutes.js";
+
 
 const app = express();
 
@@ -67,7 +68,7 @@ app.use('/emotion', emotionRoutes);
 app.use('/emotionUser', emotionUserRoutes);
 app.use('/appointment', appointmentRoutes);
 app.use('/medicalRecord', medicalRecordRoutes);
-app.use('/chat', sessionChatEvaluationRoutes)
+app.use('/chat', sessionChatRoutes)
 
 // Emitir o evento para notificar os clientes conectados sobre o novo agendamento
 io.on('connection', (socket) => {
