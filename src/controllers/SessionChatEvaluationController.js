@@ -1,4 +1,4 @@
-import SessionChat from "../models/SessionChatEvaluation.js";
+import SessionChatEvaluation from "../models/SessionChatEvaluation.js";
 
 /**
  * Lista todas as sessões de chat
@@ -18,7 +18,7 @@ export const listAllSessions = async (req, res) => {
 export const getSessionById = async (req, res) => {
   try {
     const { id } = req.params;
-    const session = await SessionChat.findOne({ sessionId: id });
+    const session = await SessionChatEvaluation.findOne({ sessionId: id });
 
     if (!session) {
       return res.status(404).json({ message: "Sessão não encontrada." });
@@ -40,7 +40,7 @@ export const createSession = async (req, res) => {
       ...req.body,
     };
 
-    const newSession = await SessionChat.create(sessionData);
+    const newSession = await SessionChatEvaluation.create(sessionData);
     res.status(201).json({ message: "Sessão criada com sucesso!", data: newSession });
   } catch (error) {
     res.status(500).json({ message: "Erro ao criar sessão.", error: error.message });
@@ -55,7 +55,7 @@ export const updateSession = async (req, res) => {
     const { id } = req.params;
     const { messages } = req.body;
 
-    const updatedSession = await SessionChat.findOneAndUpdate(
+    const updatedSession = await SessionChatEvaluation.findOneAndUpdate(
       { sessionId: id },
       { $set: { messages } },
       { new: true }
@@ -77,7 +77,7 @@ export const updateSession = async (req, res) => {
 export const finalizeSession = async (req, res) => {
   try {
     const { id } = req.params;
-    const session = await SessionChat.findOne({ sessionId: id });
+    const session = await SessionChatEvaluation.findOne({ sessionId: id });
 
     if (!session) {
       return res.status(404).json({ message: "Sessão não encontrada." });
@@ -85,7 +85,7 @@ export const finalizeSession = async (req, res) => {
 
     const lastMessage = session.messages.length > 0 ? session.messages[session.messages.length - 1].text : "";
 
-    const updatedSession = await SessionChat.findOneAndUpdate(
+    const updatedSession = await SessionChatEvaluation.findOneAndUpdate(
       { sessionId: id },
       {
         status: "completed",
@@ -111,7 +111,7 @@ export const deleteSession = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deletedSession = await SessionChat.findOneAndDelete({ sessionId: id });
+    const deletedSession = await SessionChatEvaluation.findOneAndDelete({ sessionId: id });
 
     if (!deletedSession) {
       return res.status(404).json({ message: "Sessão não encontrada." });
