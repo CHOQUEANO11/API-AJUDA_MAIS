@@ -1,4 +1,6 @@
 import SessionChatEvaluation from '../models/SessionChatEvaluation.js';
+// import mongoose from "mongoose";
+
 
 /**
  * Lista todas as sessões de chat

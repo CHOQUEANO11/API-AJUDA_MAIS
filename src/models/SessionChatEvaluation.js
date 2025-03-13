@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const SessionSchema = new mongoose.Schema({
+const SessionChatEvaluationSchema = new mongoose.Schema({
   sessionId: {
     type: String,
     required: true,
@@ -36,11 +36,11 @@ const SessionSchema = new mongoose.Schema({
   endedAt: Date,
 });
 
-// export default mongoose.model(
-//   'SessionChatEvaluation',
-//   SessionChatEvaluationSchema
-// );
+export default mongoose.model(
+  'SessionChatEvaluation',
+  SessionChatEvaluationSchema
+);
 
-const SessionChatEvaluation = mongoose.model("SessionChatEvaluation", SessionSchema);
+// const SessionChatEvaluation = mongoose.model("SessionChatEvaluation", SessionSchema);
 
-export default SessionChatEvaluation;
+// export default SessionChatEvaluation;
