@@ -1,7 +1,7 @@
 // src/routes/orgRoutes.js
 
 import express from 'express';
-import {listAllSessions, getSessionById, createSession, updateSession, finalizeSession, deleteSession} from '../controllers/sessionChatEvaluationController.js';
+import {listAllSessions, getSessionById, createSession, updateSession, finalizeSession} from '../controllers/sessionChatEvaluationController.js';
 import { authenticateToken } from '../middlewares/authMiddleware.js';
 
 
