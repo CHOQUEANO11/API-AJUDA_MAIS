@@ -15,6 +15,7 @@ class SessionChatEvaluationController {
     }
   }
 
+  
   // Obter uma sessão específica
   async getOne(req, res) {
     try {
