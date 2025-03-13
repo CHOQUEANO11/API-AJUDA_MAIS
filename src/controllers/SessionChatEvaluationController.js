@@ -1,4 +1,4 @@
-import SessionChatEvaluation from '../shemas/SessionChatEvaluation';
+import SessionChatEvaluation from '../models/SessionChatEvaluation.js';
 
 class SessionChatEvaluationController {
   async listAll(req, res) {
