@@ -5,7 +5,7 @@ import SessionChatEvaluation from "../models/SessionChatEvaluation.js";
  */
 export const listAllSessions = async (req, res) => {
   try {
-    const sessions = await SessionChat.find().sort({ createdAt: -1 });
+    const sessions = await SessionChatEvaluation.find().sort({ createdAt: -1 });
     res.status(200).json({ message: "Sessões encontradas!", data: sessions });
   } catch (error) {
     res.status(500).json({ message: "Erro ao buscar sessões.", error: error.message });
