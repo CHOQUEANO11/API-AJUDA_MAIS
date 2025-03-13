@@ -16,5 +16,7 @@ router.patch(
   finalizeSession
 );
 
+//rotas 
+
 
 export default router;
