@@ -1,0 +1,172 @@
+"use strict";Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }var _Schedulejs = require('../models/Schedule.js'); var _Schedulejs2 = _interopRequireDefault(_Schedulejs);
+var _UserSpecialtyjs = require('../models/UserSpecialty.js'); var _UserSpecialtyjs2 = _interopRequireDefault(_UserSpecialtyjs);
+var _mongoose = require('mongoose'); var _mongoose2 = _interopRequireDefault(_mongoose);
+
+/**
+ * Cria um novo agendamento
+ */
+ const createSchedule = async (req, res) => {
+  try {
+    const { orgao_id, user_id, specialty_id, date, hours } = req.body;
+
+    if (!orgao_id || !user_id || !specialty_id || !date || !hours.length) {
+      return res.status(400).json({ message: "Todos os campos são obrigatórios." });
+    }
+
+    
+    const newSchedule = new (0, _Schedulejs2.default)({ orgao_id, specialty_id, user_id, date, hours });
+    await newSchedule.save();
+
+    res.status(201).json({ message: "Agendamento criado com sucesso!", data: newSchedule });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao salvar o agendamento.", error: error.message });
+  }
+}; exports.createSchedule = createSchedule;
+
+ const getUserSchedules = async (req, res) => {
+  try {
+    const { orgao_id } = req.params; // Pega o ID da organização da URL
+
+    if (!orgao_id || !_mongoose2.default.Types.ObjectId.isValid(orgao_id)) {
+      return res.status(400).json({ message: "O ID da organização é inválido ou não fornecido." });
+    }
+
+    // Busca os agendamentos pelo orgao_id
+    const schedules = await _Schedulejs2.default.find({ orgao_id })
+      .populate("user_id", "name email")
+      .populate("specialty_id", "name")
+      .populate("orgao_id", "name")
+      .sort({ date: 1, hours: 1 });
+
+    if (!schedules.length) {
+      return res.status(404).json({ message: "Nenhuma agenda encontrada para esta organização." });
+    }
+
+    res.status(200).json({ message: "Agendamentos encontrados!", data: schedules });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao buscar agendamentos.", error: error.message });
+  }
+}; exports.getUserSchedules = getUserSchedules;
+
+
+
+ const getSchedulesBySpecialty = async (req, res) => {
+  
+  try {
+    const { specialty_id } = req.params;
+
+    if (!specialty_id) {
+      return res.status(400).json({ error: "O ID do especialista é obrigatório." });
+    }
+
+    // Busca os agendamentos e popula o nome do especialista
+    const schedules = await _Schedulejs2.default.find({ specialty_id })
+      .populate("specialty_id", "name") // Trazendo apenas o nome do especialista
+      .sort({ date: 1, hours: 1 });
+
+    if (!schedules.length) {
+      return res.status(404).json({ message: "Nenhum agendamento encontrado para este especialista." });
+    }
+
+    res.status(200).json(schedules);
+  } catch (error) {
+    console.error("Erro ao buscar os agendamentos:", error);
+    res.status(500).json({ error: "Erro interno do servidor." });
+  }
+}; exports.getSchedulesBySpecialty = getSchedulesBySpecialty;
+
+ const getSchedulesByUser = async (req, res) => {
+  try {
+    const { user_id } = req.params;
+
+    // Verifica se user_id é válido
+    if (!user_id || !_mongoose2.default.Types.ObjectId.isValid(user_id)) {
+      return res.status(400).json({ error: "ID do usuário inválido." });
+    }
+
+    const schedules = await _Schedulejs2.default.find({ user_id: user_id }).populate("user_id", "name") 
+      .populate("specialty_id", "name")
+      .sort({ date: 1, hours: 1 });
+
+    if (!schedules.length) {
+      return res.status(404).json({ message: "Nenhum agendamento encontrado." });
+    }
+
+    res.status(200).json(schedules);
+  } catch (error) {
+    console.error("Erro ao buscar agendamentos:", error);
+    res.status(500).json({ error: "Erro interno do servidor." });
+  }
+}; exports.getSchedulesByUser = getSchedulesByUser;
+
+
+/**
+ * Lista todos os agendamentos com filtros opcionais
+ */
+ const getSchedules = async (req, res) => {
+  try {
+    const { org_id, specialty_id, date } = req.query;
+
+    let query = {};
+    if (org_id) query.org_id = org_id;
+    if (specialty_id) query.specialty_id = specialty_id;
+    if (date) query.date = date;
+
+    const schedules = await _Schedulejs2.default.find(query).sort({ date: 1 });
+
+    res.status(200).json({ message: "Agendamentos encontrados!", data: schedules });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao buscar agendamentos.", error: error.message });
+  }
+}; exports.getSchedules = getSchedules;
+
+/**
+ * Edita um agendamento existente
+ */
+ const updateSchedule = async (req, res) => {
+  try {
+    const { id } = req.query; // ID do agendamento a ser atualizado
+    const { date, hours } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ message: "ID do agendamento é obrigatório." });
+    }
+
+    const updatedSchedule = await _Schedulejs2.default.findByIdAndUpdate(
+      id,
+      { date, hours },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedSchedule) {
+      return res.status(404).json({ message: "Agendamento não encontrado." });
+    }
+
+    res.status(200).json({ message: "Agendamento atualizado com sucesso!", data: updatedSchedule });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao atualizar agendamento.", error: error.message });
+  }
+}; exports.updateSchedule = updateSchedule;
+
+/**
+ * Deleta um agendamento pelo ID
+ */
+ const deleteSchedule = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "ID do agendamento é obrigatório." });
+    }
+
+    const deletedSchedule = await _Schedulejs2.default.findByIdAndDelete(id);
+
+    if (!deletedSchedule) {
+      return res.status(404).json({ message: "Agendamento não encontrado." });
+    }
+
+    res.status(200).json({ message: "Agendamento excluído com sucesso!" });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao excluir agendamento.", error: error.message });
+  }
+}; exports.deleteSchedule = deleteSchedule;

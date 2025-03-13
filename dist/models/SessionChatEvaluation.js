@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+"use strict";Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }var _mongoose = require('mongoose'); var _mongoose2 = _interopRequireDefault(_mongoose);
 
-const SessionSchema = new mongoose.Schema({
+const SessionSchema = new _mongoose2.default.Schema({
   sessionId: {
     type: String,
     required: true,
@@ -28,7 +28,7 @@ const SessionSchema = new mongoose.Schema({
     enum: ['active', 'completed'],
     default: 'active',
   },
-  diagnosis: mongoose.Schema.Types.Mixed,
+  diagnosis: _mongoose2.default.Schema.Types.Mixed,
   createdAt: {
     type: Date,
     default: Date.now,
@@ -41,6 +41,6 @@ const SessionSchema = new mongoose.Schema({
 //   SessionChatEvaluationSchema
 // );
 
-const SessionChatEvaluation = mongoose.model("SessionChatEvaluation", SessionSchema);
+const SessionChatEvaluation = _mongoose2.default.models.SessionChatEvaluation || _mongoose2.default.model("SessionChatEvaluation", SessionSchema);
 
-export default SessionChatEvaluation;
+exports. default = SessionChatEvaluation;
