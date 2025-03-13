@@ -15,6 +15,7 @@ class SessionChatEvaluationController {
     }
   }
 
+  // Obter uma sessão específica
   async getOne(req, res) {
     try {
       const session = await SessionChatEvaluation.findOne({
@@ -34,6 +35,7 @@ class SessionChatEvaluationController {
     }
   }
 
+  // Criar nova sessão
   async create(req, res) {
     try {
       const sessionData = {
@@ -76,23 +78,36 @@ class SessionChatEvaluationController {
 
   async finalize(req, res) {
     try {
-      const session = await SessionChatEvaluation.findOneAndUpdate(
-        { sessionId: req.params.id },
-        {
-          $set: {
-            status: 'completed',
-            diagnosis: req.body.diagnosis,
-            endedAt: new Date(),
-          },
-        },
-        { new: true }
-      );
+      // Buscar a sessão existente
+      const session = await SessionChatEvaluation.findOne({
+        sessionId: req.params.id,
+      });
 
       if (!session) {
         return res.status(404).json({ error: 'Sessão não encontrada' });
       }
 
-      return res.json(session);
+      // Pegar a última mensagem
+      const lastMessage =
+        session.messages.length > 0
+          ? session.messages[session.messages.length - 1].text
+          : '';
+
+      // Atualizar o diagnóstico com o resumo
+      const updatedSession = await SessionChatEvaluation.findOneAndUpdate(
+        { sessionId: req.params.id },
+        {
+          status: 'completed',
+          diagnosis: {
+            ...req.body.diagnosis,
+            summary: lastMessage,
+          },
+          endedAt: new Date(),
+        },
+        { new: true }
+      );
+
+      return res.json(updatedSession);
     } catch (error) {
       return res.status(500).json({
         error: 'Erro ao finalizar sessão',
