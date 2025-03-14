@@ -1,8 +1,8 @@
 // src/routes/orgRoutes.js
 
 import express from 'express';
-import {listAllSessions, getSessionById, createSession, updateSession, finalizeSession} from '../controllers/sessionChatController.js';
-import { authenticateToken } from '../middlewares/authMiddleware.js';
+import { listAllSessions, getSessionById, createSession, updateSession, finalizeSession } from '../controllers/sessionChatController.js';
+// import { authenticateToken } from '../middlewares/authMiddleware.js';
 
 
 const router = express.Router();
