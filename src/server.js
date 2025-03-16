@@ -23,6 +23,7 @@ import appointmentRoutes from './routes/appointmentRoutes.js';
 import medicalRecordRoutes from './routes/medicalRecordRoutes.js';
 // import sessionChatEvaluationRoutes from './routes/sessionChatEvaluationRoutes.js';
 import chatRoutes from './routes/sessionChatRoutes.js'
+import topicRoutes from './routes/topicRoutes.js';
 
 
 const app = express();
@@ -70,6 +71,7 @@ app.use('/emotionUser', emotionUserRoutes);
 app.use('/appointment', appointmentRoutes);
 app.use('/medicalRecord', medicalRecordRoutes);
 app.use('/chat', chatRoutes);
+app.use('/topic', topicRoutes);
 
 // Emitir o evento para notificar os clientes conectados sobre o novo agendamento
 io.on('connection', (socket) => {
