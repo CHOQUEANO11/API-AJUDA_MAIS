@@ -37,17 +37,25 @@ export const getSessionById = async (req, res) => {
  */
 export const createSession = async (req, res) => {
   try {
+    console.log("Recebendo requisição para criar sessão:", req.body);
+
     const sessionData = {
       sessionId: `chat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       ...req.body,
     };
 
+    console.log("Dados da sessão a serem salvos:", sessionData);
+
     const newSession = await SessionChatEvaluation.create(sessionData);
+
+    console.log("Sessão criada com sucesso:", newSession);
     res.status(201).json({ message: "Sessão criada com sucesso!", data: newSession });
   } catch (error) {
+    console.error("Erro ao criar sessão:", error);
     res.status(500).json({ message: "Erro ao criar sessão.", error: error.message });
   }
 };
+
 
 /**
  * Atualiza uma sessão de chat
