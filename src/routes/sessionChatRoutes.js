@@ -10,7 +10,7 @@ const router = express.Router();
 router.get('/getsessionchat', listAllSessions);
 router.get('/getsessionchat/:id', getSessionById);
 router.post('/createsession', createSession);
-router.patch('/updatesession/:id', updateSession);
+router.patch('/updatesession/:sessionId', updateSession);
 router.patch(
   '/sessions/finalize/:id',
   finalizeSession

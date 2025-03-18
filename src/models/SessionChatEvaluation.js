@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const SessionChatSchema = new mongoose.Schema({
+  user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   sessionId: {
     type: String,
     required: true,

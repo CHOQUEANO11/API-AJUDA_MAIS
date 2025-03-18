@@ -36,10 +36,12 @@ export const getSessionById = async (req, res) => {
  * Cria uma nova sessão de chat
  */
 export const createSession = async (req, res) => {
+  const {user_id} = req.body;
   try {
     console.log("Recebendo requisição para criar sessão:", req.body);
 
     const sessionData = {
+      user_id: user_id,
       sessionId: `chat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       ...req.body,
     };
@@ -62,11 +64,12 @@ export const createSession = async (req, res) => {
  */
 export const updateSession = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { messages } = req.body;
+    const { sessionId } = req.params;
+    console.log('Atualizando sessão:', sessionId, req.body); // Debugging
 
+    const { messages } = req.body;
     const updatedSession = await SessionChatEvaluation.findOneAndUpdate(
-      { sessionId: id },
+      { sessionId: sessionId }, // Verifique se sessionId é correto
       { $set: { messages } },
       { new: true }
     );
@@ -77,9 +80,11 @@ export const updateSession = async (req, res) => {
 
     res.status(200).json({ message: "Sessão atualizada com sucesso!", data: updatedSession });
   } catch (error) {
+    console.error('Erro ao atualizar sessão:', error);
     res.status(500).json({ message: "Erro ao atualizar sessão.", error: error.message });
   }
 };
+
 
 /**
  * Finaliza uma sessão de chat
